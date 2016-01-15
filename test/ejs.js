@@ -855,6 +855,15 @@ suite('comments', function () {
   });
 });
 
+suite('filters', function () {
+  test('apply properly', function () {
+    var fn;
+    fn = ejs.compile('<p><%=: users | map: "name" | join %></p>');
+    console.log(fn({users:[{name: 'geddy'},{name: 'greg'}]}), '<p>geddy, greg</p>');
+    assert.equal(fn({users:[{name: 'geddy'},{name: 'greg'}]}), '<p>geddy, greg</p>');
+  });
+});
+
 suite('require', function () {
 
   // Only works with inline/preprocessor includes
