@@ -9,7 +9,8 @@ var ejs = require('..')
   , read = fs.readFileSync
   , assert = require('assert')
   , path = require('path')
-  , LRU = require('lru-cache');
+  , LRU = require('lru-cache')
+  , _EOL = require('os').EOL;
 
 try {
   fs.mkdirSync(__dirname + '/tmp');
@@ -241,7 +242,7 @@ suite('ejs.renderFile(path, [data], [options], fn)', function () {
       if (err) {
         return done(err);
       }
-      assert.equal(html, '<p>hey</p>\n');
+      assert.equal(html, '<p>hey</p>'+_EOL);
       done();
     });
   });
@@ -253,7 +254,7 @@ suite('ejs.renderFile(path, [data], [options], fn)', function () {
       if (err) {
         return done(err);
       }
-      assert.equal(html, '<h1>fonebone</h1>\n');
+      assert.equal(html, '<h1>fonebone</h1>'+_EOL);
       done();
     });
   });
@@ -271,7 +272,7 @@ suite('ejs.renderFile(path, [data], [options], fn)', function () {
         doneCount = 2;
         return done(err);
       }
-      assert.equal(html, '<h1>fonebone</h1>\n');
+      assert.equal(html, '<h1>fonebone</h1>'+_EOL);
       doneCount++;
       if (doneCount === 2) {
         done();
@@ -354,7 +355,7 @@ suite('ejs.renderFile(path, [data], [options], fn)', function () {
       if (err) {
         return done(err);
       }
-      assert.equal(html, ctxt.foo + '\n');
+      assert.equal(html, ctxt.foo + ''+_EOL);
       done();
     });
 
@@ -595,7 +596,7 @@ suite('exceptions', function () {
     }
     catch (err) {
       assert.equal(err.path, 'error.ejs');
-      assert.equal(err.stack.split('\n').slice(0, 8).join('\n'), fixture('error.out'));
+      assert.equal(err.stack.split(''+_EOL).slice(0, 8).join(''+_EOL), fixture('error.out'));
       return;
     }
     throw new Error('no error reported when there should be');
@@ -610,7 +611,7 @@ suite('exceptions', function () {
     }
     catch (err) {
       assert.ok(!err.path);
-      assert.notEqual(err.stack.split('\n').slice(0, 8).join('\n'), fixture('error.out'));
+      assert.notEqual(err.stack.split(''+_EOL).slice(0, 8).join(''+_EOL), fixture('error.out'));
       return;
     }
     throw new Error('no error reported when there should be');
@@ -672,7 +673,7 @@ suite('include()', function () {
     assert.equal(
       ejs.render('<%- include("fixtures/includes/bom.ejs") %>',
         {}, {filename: path.join(__dirname, 'f.ejs')}),
-      '<p>This is a file with BOM.</p>\n');
+      '<p>This is a file with BOM.</p>'+_EOL);
   });
 
   test('include ejs with locals', function () {
@@ -733,10 +734,10 @@ suite('include()', function () {
     var file = 'test/fixtures/include_cache.ejs'
       , options = {filename: file}
       , out = ejs.compile(fixture('include_cache.ejs'), options);
-    assert.equal(out(), '<p>Old</p>\n');
+    assert.equal(out(), '<p>Old</p>'+_EOL);
 
     fs.writeFileSync(__dirname + '/tmp/include.ejs', '<p>New</p>');
-    assert.equal(out(), '<p>New</p>\n');
+    assert.equal(out(), '<p>New</p>'+_EOL);
   });
 
   test('support caching', function () {
@@ -782,7 +783,7 @@ suite('preprocessor include', function () {
     assert.equal(
       ejs.render('<% include fixtures/includes/bom.ejs %>',
         {}, {filename: path.join(__dirname, 'f.ejs')}),
-      '<p>This is a file with BOM.</p>\n');
+      '<p>This is a file with BOM.</p>'+_EOL);
   });
 
   test('work when nested', function () {
@@ -828,10 +829,10 @@ suite('preprocessor include', function () {
     var file = 'test/fixtures/include_preprocessor_cache.ejs'
       , options = {filename: file}
       , out = ejs.compile(fixture('include_preprocessor_cache.ejs'), options);
-    assert.equal(out(), '<p>Old</p>\n');
+    assert.equal(out(), '<p>Old</p>'+_EOL);
 
     fs.writeFileSync(__dirname + '/tmp/include_preprocessor.ejs', '<p>New</p>');
-    assert.equal(out(), '<p>Old</p>\n');
+    assert.equal(out(), '<p>Old</p>'+_EOL);
   });
 
   test('support caching', function () {
@@ -859,7 +860,6 @@ suite('filters', function () {
   test('apply properly', function () {
     var fn;
     fn = ejs.compile('<p><%=: users | map: "name" | join %></p>');
-    console.log(fn({users:[{name: 'geddy'},{name: 'greg'}]}), '<p>geddy, greg</p>');
     assert.equal(fn({users:[{name: 'geddy'},{name: 'greg'}]}), '<p>geddy, greg</p>');
   });
 });
