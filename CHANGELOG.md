@@ -1,3 +1,8 @@
+## v2.4.2.1: 2016-04-17
+
++ added dgofman <dgofman@gmail.com> modifications, mainly 
+  Fixed issue mde#119
+
 ## v2.4.2: 2016-04-17
 
 + preprocessor option, a function to proccess the content
