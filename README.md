@@ -25,6 +25,10 @@ $ npm install ejs
   * Static caching of templates
   * Complies with the [Express](http://expressjs.com) view system
 
+  * readded old style filters ( <%- your_var | first %> )
+  * preprocessor option to pass a function to proccess the content before EJS
+  * Issues fixed from the @mde tracker
+
 ## Example
 
 ```html
