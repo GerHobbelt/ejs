@@ -1,3 +1,11 @@
+## v2.4.2: 2016-04-17
+
++ preprocessor option, a function to proccess the content
+  before EJS (@BananaAcid)
++ old style filters readded (@BananaAcid)
+* Mocha (for windows): fixed most line ending issues where new lines
+  are not beeing tested 
+
 ## v2.4.1: 2016-01-23
 
 + Strict-mode support (@mde)

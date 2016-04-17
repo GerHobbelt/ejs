@@ -864,8 +864,20 @@ suite('filters', function () {
   });
 });
 
-suite('require', function () {
+suite('test preprocessor option', function () {
+  test('apply a preprocessor to content', function() {
+    var fn = ejs.compile('<p>yay</p>', {preprocessor: require('./fixtures/preprocessors.js').appender });
+    assert.equal(fn(), '<p>yay</p>'+'\n\nAppended a string.');
+  });
+  
+  test('include ejs and apply a preprocessor', function() {
+    var file = 'test/fixtures/hello-world.ejs';
+    assert.equal(ejs.render(fixture('hello-world.ejs'), {}, {preprocessor: require('./fixtures/preprocessors.js').appender, filename: file}),
+        fixture('hello-world.ejs')+'\n\nAppended a string.');
+  });
+});
 
+suite('require', function () {
   // Only works with inline/preprocessor includes
   test('allow ejs templates to be required as node modules', function () {
       var file = 'test/fixtures/include_preprocessor.ejs'

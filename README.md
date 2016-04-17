@@ -64,6 +64,7 @@ for all the passed options.
     and trailing whitespace. It also enables a safer version of `-%>` line
     slurping for all scriptlet tags (it does not strip new lines of tags in
     the middle of a line).
+  - `preprocessor`    Add a function to proccess the content before EJS
 
 ## Tags
 
