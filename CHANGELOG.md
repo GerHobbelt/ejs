@@ -1,3 +1,7 @@
+## v2.4.3.1 2016-04-19
+
+* merge with mde/ejs/master
+
 ## v2.4.3: 2016-04-18
 
 + api: add es6 yield support 
