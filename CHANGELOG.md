@@ -1,3 +1,11 @@
+## v2.4.3: 2016-04-18
+
++ api: add es6 yield support 
+  (https://github.com/yawnt/ejs/commit/4dd58539184193b670f7cfc124fd0e762e9bd1ca from <me@yawnt.com>)
++ restoring IIFE, so that vars can be minimized inside the
+  with; invoking IIFE not via simple () call, but rather via .apply(this) to
+  ensure correct context (from <hello@dominykas.com>)
+
 ## v2.4.2.1: 2016-04-17
 
 + added dgofman <dgofman@gmail.com> modifications, mainly 

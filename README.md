@@ -2,8 +2,8 @@
 
 Embedded JavaScript templates
 
-[![Build Status](https://img.shields.io/travis/mde/ejs/master.svg?style=flat)](https://travis-ci.org/mde/ejs)
-[![Developing Dependencies](https://img.shields.io/david/dev/mde/ejs.svg?style=flat)](https://david-dm.org/mde/ejs#info=devDependencies)
+[![Build Status](https://img.shields.io/travis/BananaAcid/ejs-with-exts/master.svg?style=flat)](https://travis-ci.org/BananaAcid/ejs-with-exts)
+[![Developing Dependencies](https://img.shields.io/david/dev/BananaAcid/ejs-with-exts.svg?style=flat)](https://david-dm.org/BananaAcid/ejs-with-exts#info=devDependencies)
 
 ## Installation
 
@@ -24,10 +24,12 @@ $ npm install ejs
   * Static caching of intermediate JavaScript
   * Static caching of templates
   * Complies with the [Express](http://expressjs.com) view system
-
-  * readded old style filters ( <%- your_var | first %> )
+  * --
+  * readded old style filters ( `<%- your_var | first %>` )
   * preprocessor option to pass a function to proccess the content before EJS
   * Issues fixed from the @mde tracker
+  * using option 'with', it applies the correct context
+  * es6 yield support (setting option `{es6: true}`)
 
 ## Example
 
@@ -159,7 +161,7 @@ including headers and footers, like so:
 
 ## Client-side support
 
-Go to the [Latest Release](https://github.com/mde/ejs/releases/latest), download
+Go to the [Latest Release](./releases/latest), download
 `./ejs.js` or `./ejs.min.js`.
 
 Include one of these on your page, and `ejs.render(str)`.
@@ -182,5 +184,3 @@ Licensed under the Apache License, Version 2.0
 - - -
 EJS Embedded JavaScript templates copyright 2112
 mde@fleegix.org.
-
-
