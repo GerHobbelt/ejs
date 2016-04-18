@@ -2,13 +2,11 @@
 
 Embedded JavaScript templates
 
-[![Build Status](https://img.shields.io/travis/BananaAcid/ejs-with-exts/master.svg?style=flat)](https://travis-ci.org/BananaAcid/ejs-with-exts)
-[![Developing Dependencies](https://img.shields.io/david/dev/BananaAcid/ejs-with-exts.svg?style=flat)](https://david-dm.org/BananaAcid/ejs-with-exts#info=devDependencies)
 
 ## Installation
 
 ```bash
-$ npm install ejs
+$ npm install github:BananaAcid/ejs-with-exts
 ```
 
 ## Features

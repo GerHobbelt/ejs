@@ -1,5 +1,5 @@
 {
-  "name": "ejs",
+  "name": "ejs-with-exts",
   "description": "Embedded JavaScript templates",
   "keywords": [
     "template",
@@ -16,10 +16,10 @@
   "main": "./lib/ejs.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/mde/ejs.git"
+    "url": "git://github.com/BananaAcid/ejs-with-exts.git"
   },
-  "bugs": "https://github.com/mde/ejs/issues",
-  "homepage": "https://github.com/mde/ejs",
+  "bugs": "https://github.com/BananaAcid/ejs-with-exts/issues",
+  "homepage": "https://github.com/BananaAcid/ejs-with-exts",
   "dependencies": {},
   "devDependencies": {
     "browserify": "^13.0.0",
