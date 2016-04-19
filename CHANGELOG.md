@@ -1,3 +1,9 @@
+## v2.4.3-3 2016-04-19
+
++ merged the cli tool from https://github.com/mde/ejs/commit/2c58f734c63906f00a8d8fa81fae3f2002a49b9b 
+* small info changes to the cli tool
++ npm script commands extended: run is linked to the cli tool
+
 ## v2.4.3.2 2016-04-19
 
 * modified include hack to fit 1efc7934223ce65e1394abd44e20046f4061d1ff / IIFE (#lvl-ctx)
