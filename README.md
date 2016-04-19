@@ -35,6 +35,7 @@ $ npm install ejs-with-exts
   * echo as function to output strings from code
   * cli tool (`$ ejs`)
   * fileLoader is a global ejs option that can be replaced to imply security settings
+  * codeTransformer is another global option - to unleash JS compilers onto the loaded JS
 
 ## Example
 
@@ -78,6 +79,10 @@ Therefore, we do not recommend using this shortcut.
     slurping for all scriptlet tags (it does not strip new lines of tags in
     the middle of a line).
   - `preprocessor`    Add a function that accepts and returns a string to proccess the content before EJS
+
+## Global only Options
+  - `fileLoader`     Use to To imply security restrictions, takes a filepath, returns a template string
+  - `codeTransformer` Use to pass prepared template JS to a compiler function (takes and returns a JS-code string) that unserstands EJS-debug JS (TypeScript, babeljs, ..)
 
 ## Tags
 

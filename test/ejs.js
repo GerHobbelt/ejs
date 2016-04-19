@@ -10,7 +10,8 @@ var ejs = require('..')
   , assert = require('assert')
   , path = require('path')
   , LRU = require('lru-cache')
-  , _EOL = require('os').EOL;
+  , _EOL = require('os').EOL
+  , tsc = require('typescript-compiler');
 
 try {
   fs.mkdirSync(__dirname + '/tmp');
@@ -19,6 +20,7 @@ try {
     throw ex;
   }
 }
+
 
 // From https://gist.github.com/pguillory/729616
 function hook_stdio(stream, callback) {
@@ -596,7 +598,7 @@ suite('exceptions', function () {
     }
     catch (err) {
       assert.equal(err.path, 'error.ejs');
-      assert.equal(err.stack.split(''+_EOL).slice(0, 8).join(''+_EOL), fixture('error.out'));
+      assert.equal(err.stack.split(/\r\n?|\n/).slice(0, 8).join('\r\n'), fixture('error.out'));
       return;
     }
     throw new Error('no error reported when there should be');
@@ -870,10 +872,22 @@ suite('test preprocessor option', function () {
     assert.equal(fn(), '<p>yay</p>'+'\n\nAppended a string.');
   });
   
-  test('include ejs and apply a preprocessor', function() {
+  test('render ejs and apply a preprocessor', function() {
     var file = 'test/fixtures/hello-world.ejs';
     assert.equal(ejs.render(fixture('hello-world.ejs'), {}, {preprocessor: require('./fixtures/preprocessors.js').appender, filename: file}),
         fixture('hello-world.ejs')+'\n\nAppended a string.');
+  });
+
+  test('render ejs and apply markdown', function() {
+    var file = 'test/fixtures/preprocessors_md.ejs';
+    assert.equal(ejs.render(fixture('preprocessors_md.ejs'), {}, {preprocessor: require('./fixtures/preprocessors.js').md, filename: file}),
+        '<p><em>em</em></p>\n');
+  });
+
+  test('render ejs and apply jade', function() {
+    var file = 'test/fixtures/preprocessors_jade.ejs';
+    assert.equal(ejs.render(fixture('preprocessors_jade.ejs'), {}, {preprocessor: require('./fixtures/preprocessors.js').jade, filename: file}),
+        '<title>my jade template</title>');
   });
 });
 
@@ -897,21 +911,42 @@ suite('require', function () {
 });
 
 suite('test fileloader', function () {
-
+  var def = ejs.fileLoader;
   var myFileLoad = function (filePath) {
     return 'myFileLoad: ' + fs.readFileSync(filePath);
   };
 
   test('test custom fileload', function (done) {
+    
     ejs.fileLoader = myFileLoad;
     ejs.renderFile('test/fixtures/para.ejs', function(err, html) {
       if (err) {
         return done(err);
       }
-      assert.equal(html, 'myFileLoad: <p>hey</p>\n');
+      assert.equal(html, 'myFileLoad: <p>hey</p>' + _EOL);
+      ejs.fileLoader = def;
       done();
     });
+  });
+  
+});
 
+suite('test codeTransformer', function () {
+  var def = ejs.codeTransformer
+    , doneFn = function(){ ejs.codeTransformer = def; };
+
+  test('test custom codeTransformer', function (done) {
+    ejs.codeTransformer = function(str) { return str.replace('hey', 'hi'); };
+    assert.equal(ejs.render(fixture('para.ejs')), '<p>hi</p>' + _EOL);
+    doneFn();
+    done();
+  });
+  test('test custom codeTransformer [TypeScript] + echo()', function (done) {
+    ejs.codeTransformer = function(str){ return tsc.compileString(str);};
+    var fn = ejs.compile(fixture('tsc.ejs'));
+    assert.equal(fn(), 'Say <p>Hello, world!</p>');
+    doneFn();
+    done();
   });
 });
 

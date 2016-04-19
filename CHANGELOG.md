@@ -1,13 +1,20 @@
+## v2.4.4 2016-04-19
+
+* fixed exception test (@BananaAcid)
++ option codeTransformer added to load JS enhancing compilers
+  (they must be able to parse the EJS debug JS, e.g. Typescript, babeljs) (@BananaAcid)
++ added a lot more tests (@BananaAcid)
+
 ## v2.4.3-3 2016-04-19
 
-+ merged the cli tool from https://github.com/mde/ejs/commit/2c58f734c63906f00a8d8fa81fae3f2002a49b9b 
-* small info changes to the cli tool
-+ npm script commands extended: run is linked to the cli tool
++ merged the cli tool from https://github.com/mde/ejs/commit/2c58f734c63906f00a8d8fa81fae3f2002a49b9b (@mde)
+* small info changes to the cli tool (@BananaAcid)
++ npm script commands extended: run is linked to the cli tool (@BananaAcid)
 
 ## v2.4.3.2 2016-04-19
 
-* modified include hack to fit 1efc7934223ce65e1394abd44e20046f4061d1ff / IIFE (#lvl-ctx)
-* echo as function to output strings from code HACK
+* modified include hack to fit 1efc7934223ce65e1394abd44e20046f4061d1ff / IIFE (#lvl-ctx) (@BananaAcid)
+* echo as function to output strings from code HACK (@BananaAcid)
 
 ## v2.4.3.1 2016-04-19
 
@@ -16,7 +23,7 @@
 ## v2.4.3: 2016-04-18
 
 + api: add es6 yield support 
-  (https://github.com/yawnt/ejs/commit/4dd58539184193b670f7cfc124fd0e762e9bd1ca from <me@yawnt.com>)
+  (https://github.com/yawnt/ejs/commit/4dd58539184193b670f7cfc124fd0e762e9bd1ca) (@yawnt)
 + restoring IIFE, so that vars can be minimized inside the
   with; invoking IIFE not via simple () call, but rather via .apply(this) to
   ensure correct context (from <hello@dominykas.com>)
@@ -24,7 +31,7 @@
 ## v2.4.2.1: 2016-04-17
 
 + added dgofman <dgofman@gmail.com> modifications, mainly 
-  Fixed issue mde#119
+  Fixed issue mde#119 (@dgofman)
 
 ## v2.4.2: 2016-04-17
 
@@ -32,7 +39,7 @@
   before EJS (@BananaAcid)
 + old style filters readded (@BananaAcid)
 * Mocha (for windows): fixed most line ending issues where new lines
-  are not beeing tested 
+  are not beeing tested (@BananaAcid)
 
 ## v2.4.1: 2016-01-23
 
