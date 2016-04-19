@@ -117,7 +117,7 @@ Includes are inserted at runtime, so you can use variables for the path in the
 top-level data object are available to all your includes, but local variables
 need to be passed down.
 
-NOTE: Include preprocessor directives (`<% include user/show %>`) are
+_NOTE:_ Standalone EJS-Include-preprocessor directives (`<% include user/show %>`) are
 still supported.
 
 ## Custom delimiters
@@ -171,6 +171,9 @@ including headers and footers, like so:
 <%- include('footer') -%>
 ```
 
+_NOTE:_ you may use the preprocessor option to load Jade, Markdown and others.
+They may generate EJS parsable code, since preprocessors are parsed first.
+
 ## FileLoader
 
 EJS by default, just loads a file an parses it. To imply security restrictions,
@@ -184,7 +187,7 @@ ejs.fileLoader = function (filePath) {
   return 'new content + from file: ' + fs.readFileSync(filePath);
 };
 ```
-_Note:_ the preprocessor option is able to modify the content on a per-template
+_NOTE:_ the preprocessor option is able to modify the content on a per-template
 basis, based on the loaded and prepared contents before EJS parses it.
 
 ## Output
