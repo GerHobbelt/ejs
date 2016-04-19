@@ -30,6 +30,7 @@ $ npm install github:BananaAcid/ejs-with-exts
   * es6 yield support (setting option `{es6: true}`)
   * echo as function to output strings from code
   * cli tool (`$ ejs`)
+  * fileLoader is a global ejs option that can be replaced to imply security settings
 
 ## Example
 
@@ -72,7 +73,7 @@ Therefore, we do not recommend using this shortcut.
     and trailing whitespace. It also enables a safer version of `-%>` line
     slurping for all scriptlet tags (it does not strip new lines of tags in
     the middle of a line).
-  - `preprocessor`    Add a function to proccess the content before EJS
+  - `preprocessor`    Add a function that accepts and returns a string to proccess the content before EJS
 
 ## Tags
 
@@ -160,6 +161,22 @@ including headers and footers, like so:
 </p>
 <%- include('footer') -%>
 ```
+
+## FileLoader
+
+EJS by default, just loads a file an parses it. To imply security restrictions,
+modify the output, or just rewrite the path and load the content, the loader can
+be replaced in globally:
+
+```javascript
+var ejs = require('ejs');
+
+ejs.fileLoader = function (filePath) {
+  return 'new content + from file: ' + fs.readFileSync(filePath);
+};
+```
+_Note:_ the preprocessor option is able to modify the content on a per-template
+basis, based on the loaded and prepared contents before EJS parses it.
 
 ## Output
 
