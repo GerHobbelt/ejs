@@ -6,7 +6,11 @@ Embedded JavaScript templates
 ## Installation
 
 ```bash
+Latest:
 $ npm install github:BananaAcid/ejs-with-exts
+
+or last published:
+$ npm install ejs-with-exts
 ```
 
 ## Features
@@ -166,7 +170,7 @@ including headers and footers, like so:
 
 EJS by default, just loads a file an parses it. To imply security restrictions,
 modify the output, or just rewrite the path and load the content, the loader can
-be replaced in globally:
+be replaced globally:
 
 ```javascript
 var ejs = require('ejs');
