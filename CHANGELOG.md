@@ -1,3 +1,8 @@
+## v2.4.3.2 2016-04-19
+
+* modified include hack to fit 1efc7934223ce65e1394abd44e20046f4061d1ff / IIFE (#lvl-ctx)
+* echo as function to output strings from code HACK
+
 ## v2.4.3.1 2016-04-19
 
 * merge with mde/ejs/master

@@ -877,6 +877,13 @@ suite('test preprocessor option', function () {
   });
 });
 
+suite('echo', function () {
+  test('compile using echo', function () {
+    var fn = ejs.compile("Say <% echo('<p>Hello world!</p>'); %>");
+    assert.equal(fn(), 'Say <p>Hello world!</p>');
+  });
+});
+
 suite('require', function () {
   // Only works with inline/preprocessor includes
   test('allow ejs templates to be required as node modules', function () {

@@ -28,6 +28,7 @@ $ npm install github:BananaAcid/ejs-with-exts
   * Issues fixed from the @mde tracker
   * using option 'with', it applies the correct context
   * es6 yield support (setting option `{es6: true}`)
+  * echo as function to output strings from code
 
 ## Example
 
@@ -158,6 +159,10 @@ including headers and footers, like so:
 </p>
 <%- include('footer') -%>
 ```
+
+## Output
+
+echo() can be used to output strings from code. (`<% echo('Hello world'); %>`)
 
 ## Client-side support
 
