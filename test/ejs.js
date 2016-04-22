@@ -1024,6 +1024,26 @@ suite('test fileloader management classes', function () {
       done();
     });
   });
+
+  test('test fileloader classes basic use setup + return of renderFile', function (done) {
+    var ejs2 = require('../lib/ejs.js');
+
+    ejs2.fileLoader = new ejs.fileLoaderManagement.FileLoader({
+      FileSelector: ['singleFileSupport'],
+      ContentOutputter: ['jsHandler']
+    });
+
+    var ret = ejs2.renderFile('./test/fixtures/includejs/main'); // {err, html}
+
+    if (ret.err) {
+      return done(ret.err);
+    }
+
+    assert.equal(ret.err, null);
+    assert.equal(ret.html, fixture('includejs/result.html') );
+
+    done();
+  });
 });
 
 suite('js scope test', function () {

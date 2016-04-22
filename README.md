@@ -40,6 +40,7 @@ $ npm install ejs-with-exts
     * able to parse different path constructs
     * handle content loading
     * modify (like word filters) content)
+  * renderFile is able to return the html directly if no callback is given (as `{err,html}`)
 
 ## Example
 
@@ -84,8 +85,11 @@ Therefore, we do not recommend using this shortcut.
     the middle of a line).
   - `preprocessor`    Add a function that accepts and returns a string to proccess the content before EJS
 
-## Global only Options
-  - `fileLoader`     Use to To imply security restrictions, takes a filepath, returns a template string (see fileLoader management classes)
+## Global Options
+set on the `ejs` object itself
+
+  - `delimiter`       Character to use with angle brackets for open/close
+  - `fileLoader`      Use to To imply security restrictions, takes a filepath, returns a template string (see fileLoader management classes)
   - `codeTransformer` Use to pass prepared template JS to a compiler function (takes and returns a JS-code string) that unserstands EJS-debug JS (TypeScript, babeljs, ..)
 
 ## Tags
@@ -124,6 +128,10 @@ need to be passed down.
 
 _NOTE:_ Standalone EJS-Include-preprocessor directives (`<% include user/show %>`) are
 still supported.
+
+_NOTE:_ In subsequently loaded templates, you can add functions and vars to be
+available in the parents and other subequent templates by using 
+`this`, e.g. `this.myGlobalVar = 123;`
 
 ## Custom delimiters
 
@@ -234,13 +242,35 @@ But: there is also a file management classes wrapper that returns a fileLoader h
 ```javascript
 var ejs = require('ejs');
 
-ejs.fileLoader = new ejs.fileLoaderManagement.Fileloader({
+ejs.fileLoader = new ejs.fileLoaderManagement.FileLoader({
   FileSelector: ['singleFileSupport', 'starSupport', {'fileSupportFn': function(filePath, inFiles){ return /*outFIles*/[]; }}],
   ContentLoader: ['loadAll'],
   ContentOutputter: ['filterWords']
 });
 
 ```
+
+### FileSelector FNs
+  `new FileSelector(filePath, optionalDefaultExt)`
+  parses a path
+  - `fileSupportFn(fn)`     user supplied fn, `fn(filePath<string>, currentfiles<array<string>>):newFilesToAdd<array<string>>`
+  - `singleFileSupport()`   add parsing of single files, and without and without ext
+  - `starSupport(optionalAllowedExts)`  support path with `*` instead of a file to load all from a folder, array of exts to load
+  - `toString()`            loads all selected files and returns the concatinated template by ContentOutputter (see file management wrapper)
+
+### ContentLoader FNs
+  `new ContentLoader(fileSelector)`
+  loads files
+  - `loadAllFn(fn)`         user supplied fn gets called on each path from FileSelector, `fn(path<string>)`
+  - `loadAll()`             loads the contents of all files
+
+### ContentOutputter FNs
+  `new ContentOutputter(contentLoader)`
+  modifies the loaded contents on a per file basis
+  - `applyFn(fn)`           applies a user function to all loaded template chunks, `fn(path<buffer>, content<string>):newContent<string|buffer>`
+  - `filterWords(optionalRegexp, optionalReplacement)`  applies a replace
+  - `jsHandler(optionalDelimiter)`    if a .js file is called, it wrapps it into EJS default `<% .. %>` delimiters (if you do not use the default ones, you will need to supply them here too)
+  - `toString()`            concatinates all contents and returns the completed template (see file management wrapper)
 
 ## Output
 

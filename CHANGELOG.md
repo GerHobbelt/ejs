@@ -1,12 +1,23 @@
-## v2.5.4 2016-03-22
+## v2.4.6 2016-04-22
 
-+ fileLoader management classes added.
-+ example usage added to Readme
-+ new test cases
-* cli tool's output is to stdout now (expected behaviour)
-* cli tool can take from stdin and parse to file
-* cli tool needs --out param to trigger rendering to files (e.g. `--out ./`)
-* cli tool: removed requirement for mkdirp
++ exported delimiter initially set (@BananaAcid)
++ jsHandler, a new FileLoader content handler (@BananaAcid)
+* renderFile() returns an object with {err,html}, if callback is not set (which it would not call) (@BananaAcid)
++ test added for jsHandler() and renderFile() return (@BananaAcid)
+
+## v2.4.5-1 2016-04-22
+
++ feat(literal): output literal %> with %%> close #153 (Roy Miloh <rmiloh@gmail.com>) PATCH 0a2623905a494aecf970114e51144234d7467135
+
+## v2.4.5 2016-04-22
+
++ fileLoader management classes added. (@BananaAcid)
++ example usage added to Readme (@BananaAcid)
++ new test cases (@BananaAcid)
+* cli tool's output is to stdout now (expected behaviour) (@BananaAcid)
+* cli tool can take from stdin and parse to file (@BananaAcid)
+* cli tool needs --out param to trigger rendering to files (e.g. `--out ./`) (@BananaAcid)
+* cli tool: removed requirement for mkdirp (@BananaAcid)
 
 ## v2.4.4 2016-04-19
 

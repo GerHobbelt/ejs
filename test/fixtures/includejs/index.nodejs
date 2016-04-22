@@ -1,0 +1,15 @@
+var ejs = require('../../../lib/ejs.js');
+
+
+ejs.fileLoader = new ejs.fileLoaderManagement.FileLoader({
+  FileSelector: ['singleFileSupport', 'starSupport'],
+  ContentOutputter: ['jsHandler']
+});
+
+
+var ret = ejs.renderFile('main'); // {err, html}
+
+if (ret.err)
+	console.error(ret.err);
+else
+	console.log(ret.html);
