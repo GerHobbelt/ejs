@@ -1,3 +1,7 @@
+## v2.4.7 2016-04-22
+
+* thoughtless naming for renderFile() return renamed from 'html' to 'content' (@BananaAcid)
+
 ## v2.4.6 2016-04-22
 
 + exported delimiter initially set (@BananaAcid)

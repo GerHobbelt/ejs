@@ -40,7 +40,7 @@ $ npm install ejs-with-exts
     * able to parse different path constructs
     * handle content loading
     * modify (like word filters) content)
-  * renderFile is able to return the html directly if no callback is given (as `{err,html}`)
+  * renderFile is able to return the content directly if no callback is given (as `{err,content}`)
 
 ## Example
 

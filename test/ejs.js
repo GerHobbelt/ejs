@@ -1033,14 +1033,14 @@ suite('test fileloader management classes', function () {
       ContentOutputter: ['jsHandler']
     });
 
-    var ret = ejs2.renderFile('./test/fixtures/includejs/main'); // {err, html}
+    var ret = ejs2.renderFile('./test/fixtures/includejs/main'); // {err,content}
 
     if (ret.err) {
       return done(ret.err);
     }
 
     assert.equal(ret.err, null);
-    assert.equal(ret.html, fixture('includejs/result.html') );
+    assert.equal(ret.content, fixture('includejs/result.html') );
 
     done();
   });
