@@ -255,7 +255,7 @@ ejs.fileLoader = new ejs.fileLoaderManagement.FileLoader({
   parses a path
   - `fileSupportFn(fn)`     user supplied fn, `fn(filePath<string>, currentfiles<array<string>>):newFilesToAdd<array<string>>`
   - `singleFileSupport()`   add parsing of single files, and without and without ext
-  - `starSupport(optionalAllowedExts)`  support path with `*` instead of a file to load all from a folder, array of exts to load
+  - `starSupport(optionalAllowedExts)`  support path with `*` (e.g. `'./tpls/*'`) instead of a file to load all from a folder, array of exts to load (defaults to optionalDefaultExt or '.ejs')
   - `toString()`            loads all selected files and returns the concatinated template by ContentOutputter (see file management wrapper)
 
 ### ContentLoader FNs
@@ -282,6 +282,56 @@ Go to the [Latest Release](./releases/latest), download
 `./ejs.js` or `./ejs.min.js`.
 
 Include one of these on your page, and `ejs.render(str)`.
+
+
+## CLI tool
+
+Just open the help to get going.
+
+```bash
+$ ejs --help
+
+ EJS - Embedded JavaScript templates CLI
+ 
+  Usage:  [options] [dir|file ...]                                                 
+                                                                                   
+  Options:                                                                         
+                                                                                   
+    -h, --help               output usage information                              
+    -V, --version            output the version number                             
+    -O, --obj <str|path>     JavaScript options object or JSON file containing it  
+    -l, --locals <str|path>  JavaScript locals object or JSON file containing it   
+    -o, --out <dir>          output the compiled html to <dir>, otherwise to screen
+    -p, --path <path>        filename used to resolve includes                     
+    -d, --delimiter <char>   delimiter to use for denoting JS code                 
+    -c, --client             compile function for client-side                      
+    -D, --no-debug           compile without debugging (smaller functions)         
+    -w, --watch              watch files for changes and automatically re-render   
+    -E, --extension <ext>    specify the output file extension                     
+                                                                                   
+  Examples:                                                                        
+                                                                                   
+    # renders all EJS files in the `templates` directory                           
+    $ ejs templates                                                                
+                                                                                   
+    # create {foo,bar}.html                                                        
+    $ ejs {foo,bar}.ejs                                                            
+                                                                                   
+    # read my.ejs and output to my.html through stdio                              
+    $ ejs my.ejs > my.html                                                         
+                                                                                   
+    # reads EJS string from stdin and output to stdout                             
+    $ echo '<%= "hello ejs" %>' | ejs                                              
+                                                                                   
+    # reads EJS string from stdin and output to my.html through stdio              
+    $ echo '<%= "hello ejs" %>' | ejs > my.html                                    
+                                                                                   
+    # reads EJS string from stdin and output to my.html through stdio and gzip it  
+    $ echo '<%= "hello ejs" %>' | ejs | gzip -f > my.html.gz                       
+                                                                                   
+    # foo, bar dirs rendering to /tmp                                              
+    $ ejs foo bar --out /tmp
+```
 
 ## Related projects
 
