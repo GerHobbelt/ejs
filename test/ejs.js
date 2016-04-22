@@ -910,6 +910,25 @@ suite('require', function () {
   });
 });
 
+suite('test codeTransformer', function () {
+  var def = ejs.codeTransformer
+    , doneFn = function(){ ejs.codeTransformer = def; };
+
+  test('test custom codeTransformer', function (done) {
+    ejs.codeTransformer = function(str) { return str.replace('hey', 'hi'); };
+    assert.equal(ejs.render(fixture('para.ejs')), '<p>hi</p>' + _EOL);
+    doneFn();
+    done();
+  });
+  test('test custom codeTransformer [TypeScript] + echo()', function (done) {
+    ejs.codeTransformer = function(str){ return tsc.compileString(str);};
+    var fn = ejs.compile(fixture('tsc.ejs'));
+    assert.equal(fn(), 'Say <p>Hello, world!</p>');
+    doneFn();
+    done();
+  });
+});
+
 suite('test fileloader', function () {
   var def = ejs.fileLoader;
   var myFileLoad = function (filePath) {
@@ -931,24 +950,86 @@ suite('test fileloader', function () {
   
 });
 
-suite('test codeTransformer', function () {
-  var def = ejs.codeTransformer
-    , doneFn = function(){ ejs.codeTransformer = def; };
+suite('test fileloader management classes', function () {
+  var def = ejs.fileLoader
+    , flFnSimple = function(filePath) {
+      var flm = ejs.fileLoaderManagement
+        , tpl = new flm.FileSelector(filePath, '.ejs').singleFileSupport(); // or any other FileSelector function
 
-  test('test custom codeTransformer', function (done) {
-    ejs.codeTransformer = function(str) { return str.replace('hey', 'hi'); };
-    assert.equal(ejs.render(fixture('para.ejs')), '<p>hi</p>' + _EOL);
-    doneFn();
-    done();
+      return tpl.toString();
+    }
+    , flFnComplex = function(filePath) {
+        var flm = ejs.fileLoaderManagement
+          , x = new flm.FileSelector(filePath).singleFileSupport().starSupport()
+          , y = new flm.ContentLoader(x).loadAll()
+          , z = new flm.ContentOutputter(y).filterWords()
+          //- now you could trigger any preprocessor on each loaded tpl:string using: `z.applyFn( the_preprocessor(<string>):<string> );`
+          , tpl = z.toString();
+          //- now you could trigger any preprocessor on the complete tpl:string : finishdTpl = the_preprocessor(tpl)
+
+        return tpl;
+      }
+    , flFnHelper = new ejs.fileLoaderManagement.FileLoader({
+        FileSelector: ['singleFileSupport'],
+        ContentOutputter: [{'filterWords': [/wheelchair/, 'speedos']}]
+      });
+
+  test('test fileloader classes simple setup', function (done) {
+    ejs.fileLoader = flFnSimple;
+
+    ejs.renderFile('./test/fixtures/double-quote', function(err, html) {
+      if (err) {
+        return done(err);
+      }
+      assert.equal(html, fixture('double-quote.html'));
+
+      ejs.fileLoader = def;
+      done();
+    });
   });
-  test('test custom codeTransformer [TypeScript] + echo()', function (done) {
-    ejs.codeTransformer = function(str){ return tsc.compileString(str);};
-    var fn = ejs.compile(fixture('tsc.ejs'));
-    assert.equal(fn(), 'Say <p>Hello, world!</p>');
-    doneFn();
-    done();
+
+  test('test fileloader classes complex setup', function (done) {
+    ejs.fileLoader = flFnComplex;
+
+    ejs.renderFile('./test/fixtures/fileloader/*', function(err, html) {
+      if (err) {
+        return done(err);
+      }
+      assert.equal(html, '<p>loki\'s "wheelchair"</p>\r\n<p>Hello world!</p>\r\n<p>hey</p>\r\n');
+
+      ejs.fileLoader = def;
+      done();
+    });
+  });
+
+  test('test fileloader classes helper setup', function (done) {
+    ejs.fileLoader = flFnHelper;
+
+    ejs.renderFile('./test/fixtures/double-quote', function(err, html) {
+      if (err) {
+        return done(err);
+      }
+      assert.equal(html, fixture('double-quote.html').replace(/wheelchair/, 'speedos') );
+
+      ejs.fileLoader = def;
+      done();
+    });
   });
 });
+
+suite('js scope test', function () {
+  test('testing availability and adding to `this`', function (done) {
+    ejs.renderFile('./test/fixtures/interop/main.ejs', function(err, html) {
+      if (err) {
+        return done(err);
+      }
+      assert.equal(html, ':Hello World>val' + _EOL + 'énd.');
+      
+      done();
+    });
+  });
+});
+
 
 suite('examples', function () {
   function noop () {}

@@ -33,9 +33,13 @@ $ npm install ejs-with-exts
   * using option 'with', it applies the correct context
   * es6 yield support (setting option `{es6: true}`)
   * echo as function to output strings from code
-  * cli tool (`$ ejs`)
+  * cli tool (`$ ejs`), as stdin compiler and as file/folder compiler
   * fileLoader is a global ejs option that can be replaced to imply security settings
   * codeTransformer is another global option - to unleash JS compilers onto the loaded JS
+  * fileLoader management classes + simple wrapper
+    * able to parse different path constructs
+    * handle content loading
+    * modify (like word filters) content)
 
 ## Example
 
@@ -81,7 +85,7 @@ Therefore, we do not recommend using this shortcut.
   - `preprocessor`    Add a function that accepts and returns a string to proccess the content before EJS
 
 ## Global only Options
-  - `fileLoader`     Use to To imply security restrictions, takes a filepath, returns a template string
+  - `fileLoader`     Use to To imply security restrictions, takes a filepath, returns a template string (see fileLoader management classes)
   - `codeTransformer` Use to pass prepared template JS to a compiler function (takes and returns a JS-code string) that unserstands EJS-debug JS (TypeScript, babeljs, ..)
 
 ## Tags
@@ -183,12 +187,59 @@ be replaced globally:
 ```javascript
 var ejs = require('ejs');
 
-ejs.fileLoader = function (filePath) {
+ejs.fileLoader = function(filePath) {
   return 'new content + from file: ' + fs.readFileSync(filePath);
 };
 ```
 _NOTE:_ the preprocessor option is able to modify the content on a per-template
 basis, based on the loaded and prepared contents before EJS parses it.
+
+## fileLoader management classes
+
+A more complex way is using the FileLoader managememnt classes allows you to 
+modify the data each object holds
+
+```javascript
+var ejs = require('ejs');
+
+ejs.fileLoader = function(filePath) {
+  var flm = ejs.fileLoaderManagement
+    , x = new flm.FileSelector(filePath).singleFileSupport().starSupport()
+    , y = new flm.ContentLoader(x).loadAll()
+    , z = new flm.ContentOutputter(y).filterWords()
+    //- now you could trigger any preprocessor on each loaded tpl:string using: `z.applyFn( the_preprocessor(<string>):<string> );`
+    , tpl = z.toString();
+    //- now you could trigger any preprocessor on the complete tpl:string : finishdTpl = the_preprocessor(tpl)
+
+  return tpl;
+};
+```
+
+You may also use the defaults for content loading and parsing, if the file selection is what you need
+
+```javascript
+var ejs = require('ejs');
+
+ejs.fileLoader = function(filePath) {
+  var flm = ejs.fileLoaderManagement
+    , tpl = new flm.FileSelector(filePath, '.ejs').singleFileSupport(); // or any other FileSelector function
+
+  return tpl;
+};
+```
+
+But: there is also a file management classes wrapper that returns a fileLoader handler:
+
+```javascript
+var ejs = require('ejs');
+
+ejs.fileLoader = new ejs.fileLoaderManagement.Fileloader({
+  FileSelector: ['singleFileSupport', 'starSupport', {'fileSupportFn': function(filePath, inFiles){ return /*outFIles*/[]; }}],
+  ContentLoader: ['loadAll'],
+  ContentOutputter: ['filterWords']
+});
+
+```
 
 ## Output
 

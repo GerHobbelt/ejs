@@ -1,3 +1,13 @@
+## v2.5.4 2016-03-22
+
++ fileLoader management classes added.
++ example usage added to Readme
++ new test cases
+* cli tool's output is to stdout now (expected behaviour)
+* cli tool can take from stdin and parse to file
+* cli tool needs --out param to trigger rendering to files (e.g. `--out ./`)
+* cli tool: removed requirement for mkdirp
+
 ## v2.4.4 2016-04-19
 
 * fixed exception test (@BananaAcid)
