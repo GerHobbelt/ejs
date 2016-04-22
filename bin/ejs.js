@@ -27,18 +27,18 @@ var fs = require('fs')
   , resolve = path.resolve
   , normalize = path.normalize
   , join = path.join
-  , mkdirp = require('mkdirp')
   , ejs = require('../')
   , options = {}
   , locals = {}
-  , ejsVersion = require('../package.json').version;
+  , ejsVersion = require('../package.json').version
+  , reExt = /\.ejs$/;
 
 program
   .version(ejsVersion)
   .usage('[options] [dir|file ...]')
   .option('-O, --obj <str|path>', 'JavaScript options object or JSON file containing it')
   .option('-l, --locals <str|path>', 'JavaScript locals object or JSON file containing it')
-  .option('-o, --out <dir>', 'output the compiled html to <dir>')
+  .option('-o, --out <dir>', 'output the compiled html to <dir>, otherwise to screen')
   .option('-p, --path <path>', 'filename used to resolve includes')
   .option('-d, --delimiter <char>', 'delimiter to use for denoting JS code')
   .option('-c, --client', 'compile function for client-side')
@@ -58,10 +58,16 @@ program.on('--help', function (){
   console.log('    $ ejs {foo,bar}.ejs');
   console.log('');
   console.log('    # read my.ejs and output to my.html through stdio');
-  console.log('    $ ejs < my.ejs > my.html');
+  console.log('    $ ejs my.ejs > my.html');
   console.log('');
   console.log('    # reads EJS string from stdin and output to stdout');
   console.log('    $ echo \'<%= "hello ejs" %>\' | ejs');
+  console.log('');
+  console.log('    # reads EJS string from stdin and output to my.html through stdio');
+  console.log('    $ echo \'<%= "hello ejs" %>\' | ejs > my.html');
+  console.log('');
+  console.log('    # reads EJS string from stdin and output to my.html through stdio and gzip it');
+  console.log('    $ echo \'<%= "hello ejs" %>\' | ejs | gzip -f > my.html.gz');
   console.log('');
   console.log('    # foo, bar dirs rendering to /tmp');
   console.log('    $ ejs foo bar --out /tmp ');
@@ -238,13 +244,22 @@ function stdin() {
   });
   process.stdin.on('end', function () {
     var output;
+    if (!options.filename) {
+      options.filename = process.cwd();
+    }
     if (options.client) {
       output = ejs.compile(buf, options);
     }
     else {
       output = ejs.compile(buf, options)(locals);
     }
-    process.stdout.write(output + '\n');
+
+    if (!program.out) {
+      process.stdout.write(output);
+    }
+    else {
+      writeOutFile(output, program.out);
+    }
   }).resume();
 }
 
@@ -254,11 +269,10 @@ function stdin() {
  */
 
 function renderFile(path, rootPath, cb) {
-  var re = /\.ejs$/;
   var stat = fs.lstatSync(path);
   cb = cb || renderFile;
   // Found ejs file/\.ejs$/
-  if (stat.isFile() && re.test(path)) {
+  if (stat.isFile() && reExt.test(path)) {
     if (options.watch) {
       watchFile(path);
     }
@@ -266,36 +280,17 @@ function renderFile(path, rootPath, cb) {
     if (!options.filename) {
       options.filename = path;
     }
-    if (program.nameAfterFile) {
-      options.name = getNameFromFileName(path);
-    }
     var fn = ejs.compile(str, options);
 
-    // --extension
-    var extname;
-    if (program.extension) {
-      extname = '.' + program.extension;
-    }
-    else if (options.client) {
-      extname = '.js';
+    var output = options.client ? fn.toString() : fn(locals);
+
+    if (!program.out) {
+      process.stdout.write(output);
     }
     else {
-      extname = '.html';
+      // --extension
+      writeOutFile(output, path, rootPath || program.out);
     }
-
-    path = path.replace(re, extname);
-    if (program.out) {
-      if (rootPath) {
-        path = join(program.out, path.replace(rootPath, ''));
-      } else {
-        path = join(program.out, basename(path));
-      }
-    }
-    var dir = resolve(dirname(path));
-    mkdirp.sync(dir, 0755);
-    var output = options.client ? fn.toString() : fn(locals);
-    fs.writeFileSync(path, output);
-    console.log('  \033[90mrendered \033[36m%s\033[0m', normalize(path));
   // Found directory
   }
   else if (stat.isDirectory()) {
@@ -306,6 +301,36 @@ function renderFile(path, rootPath, cb) {
       cb(file, rootPath || path);
     });
   }
+}
+
+function writeOutFile(output, path, rootPath) {
+  if (program.nameAfterFile) {
+    options.name = getNameFromFileName(path);
+  }
+
+  var extname;
+  if (program.extension) {
+    extname = '.' + program.extension;
+  }
+  else if (options.client) {
+    extname = '.js';
+  }
+  else {
+    extname = '.html';
+  }
+
+  path = path.replace(reExt, extname);
+  if (rootPath) {
+    path = join(program.out, path.replace(rootPath, ''));
+  }
+  var dir = resolve(dirname(path));
+
+  // cross platform
+  try { fs.mkdirSync(dir); } catch(e) {;}
+  try { fs.chmod(dir, 0755); } catch(e) {;}
+  
+  fs.writeFileSync(path, output);
+  console.log('  \033[90mrendered \033[36m%s\033[0m', normalize(path));
 }
 
 /**
