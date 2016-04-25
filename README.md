@@ -105,6 +105,11 @@ set on the `ejs` object itself
 
 ## Includes
 
+3 Methods
+  - `<%- include('path'); %>`   independly called, outputted, `echo()` outputting to the include's buffer which is returned by include() (so `<%-` is needed or a variable)
+  - `<% include path %>`        sharing context (if added to this), single line command (old backwards compat)
+  - `#include 'some.js';`       sharing context (if added to this), is part of the code / can be used with other statements (and other hash-include-directives)
+
 Includes either have to be an absolute path, or, if not, are assumed as
 relative to the template with the `include` call. (This requires the
 `filename` option.) For example if you are including `./views/user/show.ejs`
@@ -132,6 +137,20 @@ still supported.
 _NOTE:_ In subsequently loaded templates, you can add functions and vars to be
 available in the parents and other subequent templates by using 
 `this`, e.g. `this.myGlobalVar = 123;`
+
+### about the include directive
+
+since there are sandbox/security restrictions, you may use the hash-include-directive
+to include files in the the same scope, within the same output buffer:
+```cpp
+<%
+  #include 'some.js';
+  #include 'some2.ejs';
+%>
+<%
+  this.fnFromSome();
+%>
+```
 
 ## Custom delimiters
 

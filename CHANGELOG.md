@@ -1,3 +1,9 @@
+## v2.4.8 2016-04.25
+
++ added hash-include-directive (`#include 'path';\n #include 'path2';`) because of scope restrictions (@BananaAcid)
+* Readme updated to reflect the 3 include options (@BananaAcid)
+* changed some `.apply()` calls to a more appropiate `.call()` (@BananaAcid)
+
 ## v2.4.7 2016-04-22
 
 * thoughtless naming for renderFile() return renamed from 'html' to 'content' (@BananaAcid)
