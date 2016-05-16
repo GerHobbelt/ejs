@@ -1,6 +1,6 @@
 # EJS
 
-Embedded JavaScript templates
+Embedded JavaScript templates, with extensions
 
 
 ## Installation
@@ -12,6 +12,10 @@ $ npm install github:BananaAcid/ejs-with-exts
 or last published:
 $ npm install ejs-with-exts
 ```
+
+## Note
+
+Main stream ejs code is compatible. This module extends on top of ejs, incorporating bugfixes, standalone capabilities, 
 
 ## Features
 
@@ -27,21 +31,22 @@ $ npm install ejs-with-exts
   * Static caching of templates
   * Complies with the [Express](http://expressjs.com) view system
   * --
-  * readded old style filters ( `<%- your_var | first %>` )
+  * Readded old style filters ( `<%- your_var | first %>` )
   * preprocessor option to pass a function to proccess the content before EJS
-  * Issues fixed from the @mde tracker
-  * using option 'with', it applies the correct context
-  * es6 yield support (setting option `{es6: true}`)
-  * echo as function to output strings from code
-  * cli tool (`$ ejs`), as stdin compiler and as file/folder compiler
-  * fileLoader is a global ejs option that can be replaced to imply security settings
-  * codeTransformer is another global option - to unleash JS compilers onto the loaded JS (sourcemaps are not supported yet)
-  * fileLoader management classes + simple wrapper
-    * able to parse different path constructs
-    * handle content loading
-    * modify (like word filters) content)
-  * renderFile is able to return the content directly if callback is set to `null` (returns `{err,content}`)
+  * With fixed Issues from the @mde tracker
+  * Using option 'with', it applies the correct context
+  * ES6 yield support (setting option `{es6: true}`)
+  * `echo` as function to output strings from code
+  * CLI tool (`$ ejs`), as stdin compiler and as file/folder compiler
+  * `fileLoader` (lookup function) is a global ejs option, that can be replaced to setup security settings and more
+  * `fileLoaderManagement` classes + simple wrapper that can be passed to the fileLoader option
+    * Able to parse different path constructs
+    * Handle content loading
+    * Modify (like word filters) content)
+  * `codeTransformer` is another global option - to unleash JS compilers onto the loaded JS (sourcemaps are not supported yet)
+  * `renderFile()` is able to return the content directly if callback is set to `null` (returns `{err,content}`)
   * ExpressJS multi-views support
+  * default file extension can be changed, for example, to match the delimiter
 
 ## Example
 
@@ -101,7 +106,8 @@ Therefore, we do not recommend using this shortcut.
 ## Global Options
 set on the `ejs` object itself
 
-  - `delimiter`       Character to use with angle brackets for open/close
+  - `delimiter`       Character to use with angle brackets for open/close (should not contain any signs used as appended in the Tags sesction)
+  - `fileExtension`   Template file extension to use
   - `fileLoader`      Use to To imply security restrictions, takes a filepath, returns a template string (see fileLoader management classes)
   - `codeTransformer` Use to pass prepared template JS to a compiler function (takes and returns a JS-code string) that unserstands EJS-debug JS (TypeScript, babeljs, ..)
 
@@ -110,7 +116,7 @@ set on the `ejs` object itself
 This project uses [JSDoc](http://usejsdoc.org/). For the full public API 
 documentation, clone the repository and run `npm run doc`. This will run JSDoc 
 with the proper options and output the documentation to `out/`. If you want 
-the both the public & private API docs, run `npm run devdoc` instead.
+both, the public & private API docs, run `npm run devdoc` instead.
 
 ## Tags
 

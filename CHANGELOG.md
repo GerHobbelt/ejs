@@ -1,8 +1,14 @@
+## v2.4.10 2016-05-16
+
++ added fileExtension option to change from .ejs to anything (@BananaAcid)
++ some code cleanups (@BananaAcid)
++ fixed whitespace slurping to work with custom delimiters (@BananaAcid)
+
 ## v2.4.9 2016-05-16
 
 + added MarcelloDiSimone/ejs/feature/multi-views (@MarcelloDiSimone)
 + Readme updated with readFile() examples (@BananaAcid)
-+ all 99 tests work in windows (@BananaAcid)
++ all tests work in windows (@BananaAcid)
 
 ## v2.4.8 2016-04.25
 
