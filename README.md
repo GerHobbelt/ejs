@@ -35,12 +35,13 @@ $ npm install ejs-with-exts
   * echo as function to output strings from code
   * cli tool (`$ ejs`), as stdin compiler and as file/folder compiler
   * fileLoader is a global ejs option that can be replaced to imply security settings
-  * codeTransformer is another global option - to unleash JS compilers onto the loaded JS
+  * codeTransformer is another global option - to unleash JS compilers onto the loaded JS (sourcemaps are not supported yet)
   * fileLoader management classes + simple wrapper
     * able to parse different path constructs
     * handle content loading
     * modify (like word filters) content)
-  * renderFile is able to return the content directly if no callback is given (as `{err,content}`)
+  * renderFile is able to return the content directly if callback is set to `null` (returns `{err,content}`)
+  * ExpressJS multi-views support
 
 ## Example
 
@@ -57,8 +58,18 @@ var template = ejs.compile(str, options);
 template(data);
 // => Rendered HTML string
 
-ejs.render(str, data, options);
+var templateStr = ejs.render(str, data, options);
 // => Rendered HTML string
+
+ // right most param is expected to be the callback
+var cbResult = ejs.renderFile(filename, data, options, cb=function(err, str) {
+    // err => Error
+    // str => Rendered HTML string
+});
+// => result from the cb
+
+var info = ejs.renderFile(filename, data, options, cb=null);
+// => {err: Error|null, content: "Rendered HTML string"|null}
 ```
 
 It is also possible to use `ejs.render(dataAndOptions);` where you pass
@@ -70,10 +81,11 @@ Therefore, we do not recommend using this shortcut.
 ## Options
 
   - `cache`           Compiled functions are cached, requires `filename`
-  - `filename`        Used by `cache` to key caches, and for includes
+  - `filename`        The name of the file being rendered. Not required if you 
+    are using `renderFile()`. Used by `cache` to key caches, and for includes.
   - `context`         Function execution context
   - `compileDebug`    When `false` no debug instrumentation is compiled
-  - `client`          Returns standalone compiled function
+  - `client`          When `true`, compiles a function that can be rendered in the browser without needing to load the EJS Runtime ([ejs.min.js](https://github.com/mde/ejs/releases/latest)).
   - `delimiter`       Character to use with angle brackets for open/close
   - `debug`           Output generated function body
   - `strict`          When set to `true`, generated function is in strict mode
@@ -92,6 +104,13 @@ set on the `ejs` object itself
   - `fileLoader`      Use to To imply security restrictions, takes a filepath, returns a template string (see fileLoader management classes)
   - `codeTransformer` Use to pass prepared template JS to a compiler function (takes and returns a JS-code string) that unserstands EJS-debug JS (TypeScript, babeljs, ..)
 
+## JSDoc usage
+
+This project uses [JSDoc](http://usejsdoc.org/). For the full public API 
+documentation, clone the repository and run `npm run doc`. This will run JSDoc 
+with the proper options and output the documentation to `out/`. If you want 
+the both the public & private API docs, run `npm run devdoc` instead.
+
 ## Tags
 
   - `<%`              'Scriptlet' tag, for control-flow, no output
@@ -106,14 +125,17 @@ set on the `ejs` object itself
 ## Includes
 
 3 Methods
-  - `<%- include('path'); %>`   independly called, outputted, `echo()` outputting to the include's buffer which is returned by include() (so `<%-` is needed or a variable)
+  - `<%- include('path'); %>`   independly called, outputted, `echo()` outputting to the include's buffer which is returned by include() (so `<%-` or a variable is needed to use the returned buffer)
   - `<% include path %>`        sharing context (if added to this), single line command (old backwards compat)
   - `#include 'some.js';`       sharing context (if added to this), is part of the code / can be used with other statements (and other hash-include-directives)
 
 Includes either have to be an absolute path, or, if not, are assumed as
-relative to the template with the `include` call. (This requires the
-`filename` option.) For example if you are including `./views/user/show.ejs`
-from `./views/users.ejs` you would use `<%- include('user/show') %>`.
+relative to the template with the `include` call. For example if you are 
+including `./views/user/show.ejs` from `./views/users.ejs` you would 
+use `<%- include('user/show') %>`.
+
+You must specify the `filename` option for the template with the `include` 
+call unless you are using `renderFile()`.
 
 You'll likely want to use the raw output tag (`<%-`) with your include to avoid
 double-escaping the HTML output.
@@ -298,9 +320,44 @@ echo() can be used to output strings from code. (`<% echo('Hello world'); %>`)
 ## Client-side support
 
 Go to the [Latest Release](./releases/latest), download
-`./ejs.js` or `./ejs.min.js`.
+`./ejs.js` or `./ejs.min.js`. Alternately, you can compile it yourself by cloning 
+the repository and running `jake build` (or `$(npm bin)/jake build` if jake is 
+not installed globally).
 
-Include one of these on your page, and `ejs.render(str)`.
+Include one of these files on your page, and `ejs` should be available globally.
+
+### Example
+
+```html
+<div id="output"></div>
+<script src="ejs.min.js"></script>
+<script>
+  var people = ['geddy', 'neil', 'alex'],
+      html = ejs.render('<%= people.join(", "); %>', {people: people});
+  // With jQuery:
+  $('#output').html(html);
+  // Vanilla JS:
+  document.getElementById('output').innerHTML = html;
+</script>
+```
+
+### Caveats
+
+Most of EJS will work as expected; however, there are a few things to note:
+
+1. Obviously, since you do not have access to the filesystem, `ejs.renderFile()` won't work.
+2. For the same reason, `include`s do not work unless you use an `IncludeCallback`. Here is an example:
+  ```javascript
+  var str = "Hello <%= include('file', {person: 'John'}); %>",
+      fn = ejs.compile(str, {client: true});
+  
+  fn(data, null, function(path, d){ // IncludeCallback
+    // path -> 'file'
+    // d -> {person: 'John'}
+    // Put your code here 
+    // Return the contents of file as a string
+  }); // returns rendered string
+  ```
 
 
 ## CLI tool

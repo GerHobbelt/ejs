@@ -1,6 +1,10 @@
 /* jshint mocha: true */
 
 /**
+ * all tests are made compatible for windows
+ */
+
+/**
  * Module dependencies.
  */
 
@@ -10,7 +14,7 @@ var ejs = require('..')
   , assert = require('assert')
   , path = require('path')
   , LRU = require('lru-cache')
-  , _EOL = require('os').EOL
+  , _EOL = '\r\n' //require('os').EOL
   , tsc = require('typescript-compiler');
 
 try {
@@ -658,7 +662,7 @@ suite('exceptions', function () {
 suite('rmWhitespace', function () {
   test('works', function () {
     assert.equal(ejs.render(fixture('rmWhitespace.ejs'), {}, {rmWhitespace: true}),
-        fixture('rmWhitespace.html'));
+        fixture('rmWhitespace.html').replace(/(\r?\n|\r)/g, '\n'));
   });
 });
 
@@ -765,6 +769,80 @@ suite('include()', function () {
     out = ejs.render(fixture('include_cache.ejs'), {}, options);
     assert.equal(out, expected);
   });
+
+  test('support express multiple views folders, returns the first match', function (done) {
+    var data = {
+      viewsText: 'test',
+      settings: {
+        views: [
+          path.join(__dirname, 'fixtures/views'),
+          path.join(__dirname, 'fixtures')
+        ]
+      }
+    };
+    ejs.renderFile(path.join(__dirname, 'fixtures/views.ejs'), data, {}, function(error, data){
+      assert.ifError(error);
+      assert.equal('<div><p>custom test</p>'+_EOL+'</div>'+_EOL, data);
+      done()
+    });
+
+  });
+
+  test('support express multiple views folders, falls back to second if first is not available', function (done) {
+    var data = {
+      viewsText: 'test',
+      settings: {
+        views: [
+          path.join(__dirname, 'fixtures/nonexistent-folder'),
+          path.join(__dirname, 'fixtures')
+        ]
+      }
+    };
+    ejs.renderFile(path.join(__dirname, 'fixtures/views.ejs'), data, {}, function(error, data){
+      assert.ifError(error);
+      assert.equal('<div><p>global test</p>'+_EOL+'</div>'+_EOL, data);
+      done()
+    });
+
+  });
+
+  test('support express multiple views folders, also in old format', function (done) {
+    var data = {
+      viewsText: 'test',
+      settings: {
+        views: [
+          path.join(__dirname, 'fixtures/views'),
+          path.join(__dirname, 'fixtures')
+        ]
+      }
+    };
+    ejs.renderFile(path.join(__dirname, 'fixtures/views-old.ejs'), data, {}, function(error, data){
+      assert.ifError(error);
+      assert.equal('<div><p>custom test</p>'+_EOL+'</div>'+_EOL, data);
+      done()
+    });
+
+  });
+
+  test('support express multiple views folders, uses fallback also in old format', function (done) {
+    var data = {
+      viewsText: 'test',
+      settings: {
+        views: [
+          path.join(__dirname, 'fixtures/nonexistent-folder'),
+          path.join(__dirname, 'fixtures')
+        ]
+      }
+    };
+    ejs.renderFile(path.join(__dirname, 'fixtures/views-old.ejs'), data, {}, function(error, data){
+      assert.ifError(error);
+      assert.equal('<div><p>global test</p>'+_EOL+'</div>'+_EOL, data);
+      done()
+    });
+
+  });
+
+
 
 });
 
