@@ -16,7 +16,7 @@ $ npm install ejs-with-exts
 ## Features
 
   * Control flow with `<% %>`
-  * Escaped output with `<%= %>`
+  * Escaped output with `<%= %>` (escape function configurable)
   * Unescaped raw output with `<%- %>`
   * Newline-trim mode ('newline slurping') with `-%>` ending tag
   * Whitespace-trim mode (slurp all whitespace) for control flow with `<%_ _%>`
@@ -85,7 +85,7 @@ Therefore, we do not recommend using this shortcut.
     are using `renderFile()`. Used by `cache` to key caches, and for includes.
   - `context`         Function execution context
   - `compileDebug`    When `false` no debug instrumentation is compiled
-  - `client`          When `true`, compiles a function that can be rendered in the browser without needing to load the EJS Runtime ([ejs.min.js](https://github.com/mde/ejs/releases/latest)).
+  - `client`          When `true`, compiles a function that can be rendered in the browser without needing to load the EJS Runtime
   - `delimiter`       Character to use with angle brackets for open/close
   - `debug`           Output generated function body
   - `strict`          When set to `true`, generated function is in strict mode
@@ -96,6 +96,7 @@ Therefore, we do not recommend using this shortcut.
     slurping for all scriptlet tags (it does not strip new lines of tags in
     the middle of a line).
   - `preprocessor`    Add a function that accepts and returns a string to proccess the content before EJS
+  - `escape`          The escaping function used with `<%=` construct. It is used in rendering and is `.toString()`ed in the generation of client functions. (By default escapes XML).
 
 ## Global Options
 set on the `ejs` object itself
@@ -114,7 +115,7 @@ the both the public & private API docs, run `npm run devdoc` instead.
 ## Tags
 
   - `<%`              'Scriptlet' tag, for control-flow, no output
-  - `<%=`             Outputs the value into the template (HTML escaped)
+  - `<%=`             Outputs the value into the template (escaped)
   - `<%-`             Outputs the unescaped value into the template
   - `<%#`             Comment tag, no execution, no output
   - `<%%`             Outputs a literal '<%'
