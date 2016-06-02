@@ -1,3 +1,14 @@
+## v2.4.11 2016-06-02
+
++ mde/master merged
++ version adjusted
+
+## mde/master v2.4.1: 2016-05-24
+
++ Added LICENSE file to release package (@mde)
+* Various documentation improvements (@RyanZim)
+* Better line-numbers in errors (@dgofman)
+
 ## v2.4.10 2016-05-16
 
 + added fileExtension option to change from .ejs to anything (@BananaAcid)
